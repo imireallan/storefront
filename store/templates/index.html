@@ -4,22 +4,82 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <title>Document</title>
+    <style>
+        .green {
+            color: green;
+        }
+        .red {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <!-- <h2>Orders</h2>
-    <ul>
-        {% for order in orders %}
-            <li>{{ order.placed_at }} - {{ order.customer.first_name }}</li>
-        {% endfor %}
-    </ul> -->
-    <!-- <h2>OrderItems</h2>
-    <ul>
-        {% for product in ordered_products %}
-            <li>{{ product.title }} - {{ product.id }}</li>
-        {% endfor %}
-    </ul> -->
-    {{ orders }}
+    <p id="success"></p>
+    <form style="margin: 2em;" id="my-form">
+        {% csrf_token %}
+        <label for="f-name">
+            First Name
+            <input id="f-name" name="first_name" type="text">
+        </label><br/><br/>
+        <label for="name">
+            Last Name
+            <input id="l-name" name="last_name" type="text">
+        </label><br/><br/>
+        <label for="email">
+            Email
+            <input id="email" name="email" type="email">
+        </label><br/><br/>
+        <label for="phone">
+            Phone
+            <input id="phone" name="phone" type="tel">
+        </label><br/><br/>
+        <label for="date">
+            Birth Date
+            <input id="date" name="birth_date" type="date">
+        </label><br/><br/>
+        <select name="membership" id="m">
+            <option value="B">Bronze</option>
+            <option value="S">Silver</option>
+            <option value="G">Gold</option>
+        </select><br/><br/>
+        <input type="submit" value="Save">
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(() => {
+            let form = $('#my-form')
+            const p = $('#success')
+            form.on('submit', e => {
+                e.preventDefault()
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        first_name: $('#f-name').val(),
+                        last_name: $('#l-name').val(),
+                        email: $('#email').val(),
+                        phone: $('#phone').val(),
+                        birth_date: $('#date').val(),
+                        membership: $('#m').val(),
+                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    url: "{% url 'create-customer' %}",
+                    success: resp => {
+                        p.removeClass('red')
+                        p.addClass('green')
+                        p.text(resp)
+                    },
+                    error: error => {
+                        console.error(error)
+                        p.removeClass('green')
+                        p.addClass('red')
+                        p.html(error.responseText)
+                    }
+                })
+            })
+        })
+    </script>
 
 </body>
 </html>
