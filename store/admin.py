@@ -101,11 +101,11 @@ class CollectionAdmin(admin.ModelAdmin):
             })
 
         )
-        return format_html('<a href="{}">{}</a>', url, collection.product_count)
+        return format_html('<a href="{}">{}</a>', url, collection.products_count)
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            product_count=Count('product')
+            products_count=Count('products')
         )
 
 admin.site.register(models.OrderItem)
